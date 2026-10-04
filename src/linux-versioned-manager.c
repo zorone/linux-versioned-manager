@@ -25,9 +25,9 @@ static void handler(int signum) {
         case SIGWINCH:
             {
                 endwin();
+                refresh();
                 box(mainScreen, LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
-                refresh();
                 clear();
             }
             break;
@@ -38,8 +38,6 @@ static void handler(int signum) {
 int main(int argc, char* argv[]) {
     sigaction_t sa = { .sa_handler=handler };
     sigaction(SIGWINCH, &sa, NULL);
-
-    ioctl(0, TIOCGWINSZ, &winsz);
     
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
@@ -49,6 +47,7 @@ int main(int argc, char* argv[]) {
     box(mainScreen, 0, 0);
     mvwaddstr(mainScreen, 2, 2, displayText);
     refresh();
+    wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
 
     while(getch() != 'q');
