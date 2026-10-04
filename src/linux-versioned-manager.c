@@ -1,3 +1,4 @@
+#include <asm-generic/ioctls.h>
 #include <stdio.h>
 #include <signal.h>
 #include <sys/ioctl.h>
@@ -14,14 +15,22 @@ typedef struct sigaction sigaction_t;
 typedef struct winsize winsize_t;
 
 static void handler(int signum) {
-
+    switch(signum) {
+        case SIGWINCH:
+            {
+                winsize_t winsz;
+                ioctl(0, TIOCGWINSZ, &winsz);
+            }
+            break;
+        default:
+    }
 }
 
 int main(int argc, char* argv[]) {
     sigaction_t sa = { .sa_handler=handler };
     sigaction(SIGWINCH, &sa, NULL);
 
-    winsize_t winsz;
+    
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
 
