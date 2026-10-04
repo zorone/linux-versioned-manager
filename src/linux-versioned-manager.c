@@ -24,11 +24,11 @@ static void handler(int signum) {
     switch(signum) {
         case SIGWINCH:
             {
-                ioctl(0, TIOCGWINSZ, &winsz);
-                wresize(mainScreen, winsz.ws_row, winsz.ws_col);
-                box(mainScreen, winsz.ws_row, winsz.ws_col);
+                endwin();
+                box(mainScreen, LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
                 refresh();
+                clear();
             }
             break;
         default:
@@ -43,13 +43,12 @@ int main(int argc, char* argv[]) {
     
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
-    sprintf(displayText, "%3d %3d", winsz.ws_row, winsz.ws_col);
+    sprintf(displayText, "%3d %3d", LINES, COLS);
 
-    mainScreen = newwin(winsz.ws_row, winsz.ws_col, 0, 0);
+    mainScreen = newwin(LINES, COLS, 0, 0);
     box(mainScreen, 0, 0);
     mvwaddstr(mainScreen, 2, 2, displayText);
     refresh();
-    wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
 
     while(getch() != 'q');
