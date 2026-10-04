@@ -29,6 +29,7 @@ static void handler(int signum) {
                 refresh();
                 clear();
                 box(mainScreen, LINES, COLS);
+                sprintf(displayText, "%3d %3d", LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
                 refresh();
                 wrefresh(mainScreen);
