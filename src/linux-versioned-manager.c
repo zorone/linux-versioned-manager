@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <signal.h>
+#include <sys/ioctl.h>
+
 #ifdef __MINGW32__
     #include <ncurses/ncurses.h>
     #include <ncurses/panel.h>
@@ -6,9 +10,18 @@
     #include <panel.h>
 #endif
 
-#include <stdio.h>
+typedef struct sigaction sigaction_t;
+typedef struct winsize winsize_t;
+
+static void handler(int signum) {
+
+}
 
 int main(int argc, char* argv[]) {
+    sigaction_t sa = { .sa_handler=handler };
+    sigaction(SIGWINCH, &sa, NULL);
+
+    winsize_t winsz;
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
 
