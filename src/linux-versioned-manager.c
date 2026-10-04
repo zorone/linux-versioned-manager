@@ -20,15 +20,18 @@ PANEL *mainPanel = NULL;
 
 char displayText[8] = ""; 
 
+// https://stackoverflow.com/a/13707598
 static void handler(int signum) {
     switch(signum) {
         case SIGWINCH:
             {
                 endwin();
                 refresh();
+                clear();
                 box(mainScreen, LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
-                clear();
+                refresh();
+                wrefresh(mainScreen);
             }
             break;
         default:
