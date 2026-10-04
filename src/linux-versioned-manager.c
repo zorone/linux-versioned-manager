@@ -96,11 +96,11 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // https://stackoverflow.com/a/69492307
     // https://stackoverflow.com/a/35712716
     cchar_t lhChar = {};
-    setcchar(&lhChar, L"\u2502", 0, 0, 0);
-    mvwprintw(win, 0, 0, "\u250c%*s\u2510", end.col-1, "\u2500");
+    setcchar(&lhChar, L"\xe2\x94\x82", 0, 0, 0);
+    mvwprintw(win, 0, 0, "\xe2\x94\x8c%*s\xe2\x94\x90", end.col-1, "\xe2\x94\x80");
     mvwvline_set(win, 1, 0, &lhChar, start.row-1);
     mvwvline_set(win, 1, end.col, &lhChar, end.row-1);
-    mvwprintw(win, end.row, 0, "\u2514%*s\u2518", end.col-1, "─");
+    mvwprintw(win, end.row, 0, "\xe2\x94\x94%*s\xe2\x94\x98", end.col-1, "\xe2\x94\x80");
 
     return 0;
 }
