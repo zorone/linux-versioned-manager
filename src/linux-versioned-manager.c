@@ -4,6 +4,9 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 
+// https://stackoverflow.com/a/30960382
+#define _XOPEN_SOURCE_EXTENDED
+
 #ifdef __MINGW32__
     #include <ncurses/ncurses.h>
     #include <ncurses/panel.h>
@@ -91,10 +94,12 @@ nstr nstrCreate(const char* str) {
 
 int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // https://stackoverflow.com/a/69492307
-    mvwprintw(win, 0, 0, "\u250c%*s\u2510", end.col-1, "\u2500");
-    mvwvline_set(win, 1, 0, u'\u2502', start.row-1);
-    mvwvline_set(win, 1, end.col, u'\u2502', end.row-1);
-    mvwprintw(win, end.row, 0, "\u2514%*s\u2518", end.col-1, "─");
+    // https://stackoverflow.com/a/35712716
+    wborder_set(win, u'\u2502', u'\u2502', u'\u2500', u'\u2500', u'\u250c', u'\u2510', u'\u2514', u'\u2518');
+    // mvwprintw(win, 0, 0, "\u250c%*s\u2510", end.col-1, "\u2500");
+    // mvwvline_set(win, 1, 0, u'\u2502', start.row-1);
+    // mvwvline_set(win, 1, end.col, u'\u2502', end.row-1);
+    // mvwprintw(win, end.row, 0, "\u2514%*s\u2518", end.col-1, "─");
 
     return 0;
 }
