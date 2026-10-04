@@ -15,11 +15,17 @@ typedef struct sigaction sigaction_t;
 typedef struct winsize winsize_t;
 winsize_t winsz;
 
+WINDOW *mainScreen = NULL;
+PANEL *mainPanel = NULL;
+
 static void handler(int signum) {
     switch(signum) {
         case SIGWINCH:
             {
                 ioctl(0, TIOCGWINSZ, &winsz);
+                wresize(mainScreen, winsz.ws_row, winsz.ws_col);
+                box(mainScreen, 0, 0);
+                refresh();
             }
             break;
         default:
@@ -35,11 +41,11 @@ int main(int argc, char* argv[]) {
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
 
-    WINDOW *mainScreen = newwin(winsz.ws_row, winsz.ws_col, 0, 0);
+    mainScreen = newwin(winsz.ws_row, winsz.ws_col, 0, 0);
     box(mainScreen, 0, 0);
     refresh();
     wrefresh(mainScreen);
-    PANEL *mainPanel = new_panel(mainScreen);
+    mainPanel = new_panel(mainScreen);
 
     getch();
     endwin();
