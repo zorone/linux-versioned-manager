@@ -87,8 +87,9 @@ nstr nstrCreate(const char* str) {
 
 int customBorder(WINDOW* win, int, pos_t start, pos_t end) {
     mvwprintw(win, 0, 0, "┌%*s┐", end.col-1, "─");
-    wmove(win, 1, 0);
-    
+    mvwvline(win, 1, 0, L'│', start.row-1);
+    mvwvline(win, end.col-1, 0, L'│', end.row-1);
+    mvwprintw(win, 0, 0, "┌%*s┐", end.col-1, "─");
 }
 // ┌─┐
 // │ │
