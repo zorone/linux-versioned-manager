@@ -38,7 +38,7 @@ PANEL *mainPanel = NULL;
 char displayText[8] = ""; 
 
 nstr nstrCreate(const char* str);
-int customBorder(WINDOW* win, int, pos_t start, pos_t end);
+int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end);
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
@@ -67,8 +67,10 @@ int main(int argc, char* argv[]) {
     keypad(stdscr, TRUE);
     sprintf(displayText, "%3d %3d", LINES, COLS);
 
+    nstr mainTitle = nstrCreate("kernel varients");
+
     mainScreen = newwin(LINES, COLS, 0, 0);
-    box(mainScreen, 0, 0);
+    customBorder(mainScreen, &mainTitle, {0, 0}, {0, 0});
     mvwaddstr(mainScreen, 2, 2, displayText);
     refresh();
     wrefresh(mainScreen);
@@ -85,12 +87,11 @@ nstr nstrCreate(const char* str) {
     return tmp;
 }
 
-int customBorder(WINDOW* win, int, pos_t start, pos_t end) {
+int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     mvwprintw(win, 0, 0, "┌%*s┐", end.col-1, "─");
     mvwvline(win, 1, 0, L'│', start.row-1);
-    mvwvline(win, end.col-1, 0, L'│', end.row-1);
-    mvwprintw(win, 0, 0, "┌%*s┐", end.col-1, "─");
+    mvwvline(win, 1, end.col, L'│', end.row-1);
+    mvwprintw(win, end.row, 0, "└%*s┘", end.col-1, "─");
+
+    return 0;
 }
-// ┌─┐
-// │ │
-// └─┘
