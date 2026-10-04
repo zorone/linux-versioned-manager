@@ -70,7 +70,9 @@ int main(int argc, char* argv[]) {
     nstr mainTitle = nstrCreate("kernel varients");
 
     mainScreen = newwin(LINES, COLS, 0, 0);
-    customBorder(mainScreen, &mainTitle, {0, 0}, {0, 0});
+    pos_t mainScreenStartPos = {0, 0};
+    pos_t mainScreenEndPos   = {LINES, COLS};
+    customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
     mvwaddstr(mainScreen, 2, 2, displayText);
     refresh();
     wrefresh(mainScreen);
