@@ -96,7 +96,7 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // https://stackoverflow.com/a/69492307
     // https://stackoverflow.com/a/35712716
     cchar_t lhChar = {};
-    setcchar(&lhChar, L"\u2502", NULL, NULL, NULL);
+    setcchar(&lhChar, L"\u2502", 0, 0, 0);
     mvwprintw(win, 0, 0, "\u250c%*s\u2510", end.col-1, "\u2500");
     mvwvline_set(win, 1, 0, &lhChar, start.row-1);
     mvwvline_set(win, 1, end.col, &lhChar, end.row-1);
