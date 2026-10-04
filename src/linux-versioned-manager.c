@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
 
-    getch();
+    while(getch() != 'q');
     endwin();
     return 0;
 }
