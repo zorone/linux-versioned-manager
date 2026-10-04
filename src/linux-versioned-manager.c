@@ -26,7 +26,7 @@ PANEL *mainPanel = NULL;
 
 char displayText[8] = ""; 
 
-nstr* nstrCreate(const char* str);
+int nstrCreate(nstr* nstr, const char* str);
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
@@ -67,8 +67,9 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-nstr* nstrCreate(const char* str) {
+int nstrCreate(nstr* nstr, const char* str) {
     unsigned int len = strlen(str);
-    nstr tmp = { .str=str, .len=len};
-    return &tmp;
+    nstr->str=str;
+    nstr->len=len;
+    return 0;
 }
