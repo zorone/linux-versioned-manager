@@ -1,5 +1,6 @@
 #include <asm-generic/ioctls.h>
 #include <stdio.h>
+#include <string.h>
 #include <signal.h>
 #include <sys/ioctl.h>
 
@@ -25,7 +26,7 @@ PANEL *mainPanel = NULL;
 
 char displayText[8] = ""; 
 
-nstr* nstrCreate(const char* str, unsigned int len);
+nstr* nstrCreate(const char* str);
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
@@ -66,7 +67,8 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-nstr* nstrCreate(const char* str, unsigned int len) {
-    nstr* tmp = { .str=str, .len=strlen()};
-    return tmp;
+nstr* nstrCreate(const char* str) {
+    unsigned int len = strlen(str);
+    nstr tmp = { .str=str, .len=len};
+    return &tmp;
 }
