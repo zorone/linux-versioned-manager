@@ -21,12 +21,24 @@ typedef struct {
     const unsigned int len;
 } nstr;
 
+typedef struct {
+    union {
+        int row;
+        int y;
+    };
+    union {
+        int col;
+        int x;
+    };
+} pos_t;
+
 WINDOW *mainScreen = NULL;
 PANEL *mainPanel = NULL;
 
 char displayText[8] = ""; 
 
-int nstrCreate(nstr* nstr, const char* str);
+nstr nstrCreate(const char* str);
+int customBorder(WINDOW* win, int, pos_t start, pos_t end);
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
@@ -67,9 +79,15 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-int nstrCreate(nstr* nstr, const char* str) {
+nstr nstrCreate(const char* str) {
     unsigned int len = strlen(str);
-    nstr->str=str;
-    nstr->len=len;
-    return 0;
+    nstr tmp = {.str=str, .len=len};
+    return tmp;
 }
+
+int customBorder(WINDOW* win, int, pos_t start, pos_t end) {
+    wmove(win, 0, 0);
+}
+// ┌─┐
+// │ │
+// └─┘
