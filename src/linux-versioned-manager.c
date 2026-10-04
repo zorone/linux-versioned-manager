@@ -24,7 +24,7 @@ static void handler(int signum) {
             {
                 ioctl(0, TIOCGWINSZ, &winsz);
                 wresize(mainScreen, winsz.ws_row, winsz.ws_col);
-                box(mainScreen, 0, 0);
+                box(mainScreen, winsz.ws_row, winsz.ws_col);
                 refresh();
             }
             break;
