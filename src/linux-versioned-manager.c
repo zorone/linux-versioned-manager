@@ -126,15 +126,14 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
 }
 
 int cleanLingeringBorder(WINDOW* win, pos_t prevStartPos, pos_t prevEndPos) {
-    chtype bg = getbkgd(win);
     if(prevEndPos.row < LINES) {
         wmove(win, prevEndPos.row, 1);
-        for(int i = 1; i < prevEndPos.col; i++) waddch(win, bg);
+        for(int i = 1; i < prevEndPos.col; i++) waddch(win, ' ');
     }
     if(prevEndPos.col < COLS) {
         for(int i = 1; i < prevEndPos.row; i++) {
             wmove(win, i, prevEndPos.col);
-            waddch(win, bg);
+            waddch(win, ' ');
         }
     }
 
