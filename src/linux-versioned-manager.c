@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
     mainScreenEndPos = (pos_t){LINES, COLS};
     mainScreenPrevEndPos = mainScreenEndPos;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
-    mvwaddstr(mainScreen, 2, 2, displayText);
+    mvwaddnstr(mainScreen, 2, 2, displayText, 8);
     refresh();
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
