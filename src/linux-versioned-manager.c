@@ -39,6 +39,9 @@ WINDOW *mainScreen = NULL;
 PANEL *mainPanel = NULL;
 
 char displayText[8] = ""; 
+nstr mainTitle = {};
+pos_t mainScreenStartPos = {};
+pos_t mainScreenEndPos   = {};
 
 nstr nstrCreate(const char* str);
 int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end);
@@ -72,8 +75,10 @@ int main(int argc, char* argv[]) {
     nstr mainTitle = nstrCreate("kernel varients");
 
     mainScreen = newwin(LINES, COLS, 0, 0);
-    pos_t mainScreenStartPos = {0, 0};
-    pos_t mainScreenEndPos   = {LINES, COLS};
+    mainScreenStartPos.row = 0;
+    mainScreenStartPos.col = 0;
+    mainScreenEndPos.row   = LINES;
+    mainScreenEndPos.col   = COLS;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
     mvwaddstr(mainScreen, 2, 2, displayText);
     refresh();
