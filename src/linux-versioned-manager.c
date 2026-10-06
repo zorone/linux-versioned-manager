@@ -57,8 +57,6 @@ static void handler(int signum) {
                 refresh();
                 clear();
                 mainScreenEndPos = (pos_t){LINES, COLS};
-                cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
-                mainScreenPrevEndPos = mainScreenEndPos;
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
@@ -106,6 +104,10 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // Historical record
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
+
+    cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
+    mainScreenPrevEndPos = mainScreenEndPos;
+
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
     for(int i = 2; i < end.col; i++) waddch(win, ACS_HLINE);
