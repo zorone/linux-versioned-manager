@@ -59,7 +59,7 @@ static void handler(int signum) {
                 mainScreenEndPos.col   = COLS;
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
-                mvwinstr(mainScreen, 2, 2, displayText);
+                mvwinsstr(mainScreen, 2, 2, displayText);
                 refresh();
                 wrefresh(mainScreen);
             }
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
     mainScreenEndPos = (pos_t){LINES, COLS};
     mainScreenPrevEndPos = mainScreenEndPos;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
-    mvwinstr(mainScreen, 2, 2, displayText);
+    mvwinsstr(mainScreen, 2, 2, displayText);
     refresh();
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
@@ -105,9 +105,9 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
     wmove(win, 0, 0);
-    waddch(win, ACS_ULCORNER);
-    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
-    waddch(win, ACS_URCORNER);
+    winsch(win, ACS_ULCORNER);
+    for(int i = 1; i < end.col; i++) winsch(win, ACS_HLINE);
+    winsch(win, ACS_URCORNER);
     
     for(int i = 1; i < end.row; i++) {
         wmove(win, i, 0);
@@ -116,16 +116,9 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
         winsch(win, ACS_VLINE);
     }
     wmove(win, end.row-1, 0);
-    waddch(win, ACS_LLCORNER);
-    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
-    waddch(win, ACS_LRCORNER);
+    winsch(win, ACS_LLCORNER);
+    for(int i = 1; i < end.col; i++) winsch(win, ACS_HLINE);
+    winsch(win, ACS_LRCORNER);
 
     return 0;
 }
-
-// ACS_VLINE
-// ACS_HLINE
-// ACS_ULCORNER
-// ACS_URCORNER
-// ACS_LLCORNER
-// ACS_LRCORNER
