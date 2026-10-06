@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
     mainScreenPrevEndPos = mainScreenEndPos;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
-    mvwaddnstr(mainScreen, 2, 2, prevEndPosText, 8);
+    mvwaddnstr(mainScreen, 3, 2, prevEndPosText, 8);
     refresh();
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
@@ -109,11 +109,14 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // Historical record
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
+    mvwaddstr(mainScreen, 2, 2, endPosText);
     mvwaddstr(mainScreen, 3, 2, prevEndPosText);
     refresh();
     wrefresh(mainScreen);
     sleep(1);
     cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
+    mvwaddstr(mainScreen, 2, 2, endPosText);
+    mvwaddstr(mainScreen, 3, 2, prevEndPosText);
     refresh();
     wrefresh(mainScreen);
     sleep(1);
