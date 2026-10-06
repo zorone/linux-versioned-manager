@@ -110,8 +110,12 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
     mvwaddstr(mainScreen, 3, 2, prevEndPosText);
+    refresh();
+    wrefresh(mainScreen);
     sleep(1);
     cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
+    refresh();
+    wrefresh(mainScreen);
     sleep(1);
     mainScreenPrevEndPos = mainScreenEndPos;
     sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
