@@ -53,6 +53,8 @@ static void handler(int signum) {
             {
                 endwin();
                 refresh();
+                mainScreenEndPos.row   = LINES;
+                mainScreenEndPos.col   = COLS;
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
