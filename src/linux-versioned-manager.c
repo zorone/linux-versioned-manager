@@ -108,7 +108,7 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // UNUSED: https://stackoverflow.com/a/35712716
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
-    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
+    for(int i = 2; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_URCORNER);
     
     for(int i = 1; i < end.row; i++) {
@@ -119,7 +119,7 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     }
     wmove(win, end.row-1, 0);
     waddch(win, ACS_LLCORNER);
-    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
+    for(int i = 2; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_LRCORNER);
 
     return 0;
@@ -131,5 +131,10 @@ int cleanLingeringBorder(WINDOW* win, pos_t prevStartPos, pos_t prevEndPos) {
         wmove(win, prevEndPos.row, 1);
         for(int i = 1; i < prevEndPos.col; i++) waddch(win, bg);
     }
+    if(prevEndPos.col < COLS) {
+        wmove(win, 1, prevEndPos.col);
+        for(int i = 1; i < prevEndPos.row; i++) waddch(win, bg);
+    }
+
     return 0;
 }
