@@ -83,13 +83,11 @@ int main(int argc, char* argv[]) {
     nstr mainTitle = nstrCreate("kernel varients");
 
     mainScreen = newwin(LINES, COLS, 0, 0);
-    mainScreenStartPos.row = 0;
-    mainScreenStartPos.col = 0;
-    mainScreenEndPos = (pos_t){LINES, COLS};
+    mainScreenStartPos = (pos_t){0, 0};
+    mainScreenEndPos   = (pos_t){LINES, COLS};
     mainScreenPrevEndPos = mainScreenEndPos;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
-    mvwaddnstr(mainScreen, 3, 2, prevEndPosText, 8);
     refresh();
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
@@ -109,20 +107,8 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // Historical record
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
-    mvwaddstr(mainScreen, 2, 2, endPosText);
-    mvwaddstr(mainScreen, 3, 2, prevEndPosText);
-    refresh();
-    wrefresh(mainScreen);
-    sleep(1);
     cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
-    mvwaddstr(mainScreen, 2, 2, endPosText);
-    mvwaddstr(mainScreen, 3, 2, prevEndPosText);
-    refresh();
-    wrefresh(mainScreen);
-    sleep(1);
     mainScreenPrevEndPos = mainScreenEndPos;
-    sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
-    mvwaddstr(mainScreen, 3, 2, prevEndPosText);
 
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
