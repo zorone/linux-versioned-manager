@@ -59,7 +59,7 @@ static void handler(int signum) {
                 mainScreenEndPos.col   = COLS;
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
-                mvwinsstr(mainScreen, 2, 2, displayText);
+                mvwaddstr(mainScreen, 2, 2, displayText);
                 refresh();
                 wrefresh(mainScreen);
             }
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
     mainScreenEndPos = (pos_t){LINES, COLS};
     mainScreenPrevEndPos = mainScreenEndPos;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
-    mvwinsstr(mainScreen, 2, 2, displayText);
+    mvwaddstr(mainScreen, 2, 2, displayText);
     refresh();
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
@@ -106,7 +106,7 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // UNUSED: https://stackoverflow.com/a/35712716
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
-    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
+    for(int i = 2; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_URCORNER);
     
     for(int i = 1; i < end.row; i++) {
