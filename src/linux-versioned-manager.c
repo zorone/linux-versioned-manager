@@ -50,8 +50,7 @@ static void handler(int signum) {
             {
                 endwin();
                 refresh();
-                clear();
-                box(mainScreen, LINES, COLS);
+                customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
                 refresh();
@@ -97,15 +96,27 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
     wmove(win, 0, 0);
-    printf("\u250c%*s\u2510", end.col-1, "\u2500");
+    waddch(win, ACS_ULCORNER);
+    for(int i = 1; i < end.row; i++) waddch(win, ACS_HLINE);
+    waddch(win, ACS_URCORNER);
+    
     for(int i = 1; i < end.row; i++) {
         wmove(win, i, 0);
-        printf("\u2502");
+        winsch(win, ACS_VLINE);
         wmove(win, i, end.col);
-        printf("\u2502");
+        winsch(win, ACS_VLINE);
     }
     wmove(win, end.row, 0);
-    printf("\u2514%*s\u2518", end.col-1, "\u2500");
+    waddch(win, ACS_LLCORNER);
+    for(int i = 1; i < end.row; i++) waddch(win, ACS_HLINE);
+    waddch(win, ACS_LRCORNER);
 
     return 0;
 }
+
+// ACS_VLINE
+// ACS_HLINE
+// ACS_ULCORNER
+// ACS_URCORNER
+// ACS_LLCORNER
+// ACS_LRCORNER
