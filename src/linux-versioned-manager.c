@@ -151,7 +151,7 @@ int cleanLingeringBorder(WINDOW* win, pos_t prevStartPos, pos_t prevEndPos) {
     if(prevEndPos.col < COLS) {
         for(int i = 1; i < prevEndPos.row; i++) {
             wmove(win, i, prevEndPos.col);
-            waddch(win, ' ');
+            waddch(win, '+');
         }
     }
 
