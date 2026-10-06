@@ -105,20 +105,20 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
     wmove(win, 0, 0);
-    winsch(win, ACS_ULCORNER);
-    for(int i = 1; i < end.col; i++) winsch(win, ACS_HLINE);
-    winsch(win, ACS_URCORNER);
+    waddch(win, ACS_ULCORNER);
+    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
+    waddch(win, ACS_URCORNER);
     
     for(int i = 1; i < end.row; i++) {
         wmove(win, i, 0);
-        winsch(win, ACS_VLINE);
+        waddch(win, ACS_VLINE);
         wmove(win, i, end.col-1);
-        winsch(win, ACS_VLINE);
+        waddch(win, ACS_VLINE);
     }
     wmove(win, end.row-1, 0);
-    winsch(win, ACS_LLCORNER);
-    for(int i = 1; i < end.col; i++) winsch(win, ACS_HLINE);
-    winsch(win, ACS_LRCORNER);
+    waddch(win, ACS_LLCORNER);
+    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
+    waddch(win, ACS_LRCORNER);
 
     return 0;
 }
