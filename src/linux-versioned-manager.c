@@ -100,11 +100,12 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     printf("\u250c%*s\u2510", end.col-1, "\u2500");
     for(int i = 1; i < end.row; i++) {
         wmove(win, i, 0);
-        putchar()
+        printf("\u2502");
+        wmove(win, i, end.col);
+        printf("\u2502");
     }
-    mvwvline_set(win, 1, 0, L"\xe2\x94\x82", start.row-1);
-    mvwvline_set(win, 1, end.col, L"\xe2\x94\x82", end.row-1);
-    mvwprintw(win, end.row, 0, "\xe2\x94\x94%*s\xe2\x94\x98", end.col-1, "\xe2\x94\x80");
+    wmove(win, end.row, 0);
+    printf("\u2514%*s\u2518", end.col-1, "\u2500");
 
     return 0;
 }
