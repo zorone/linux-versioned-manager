@@ -57,7 +57,7 @@ static void handler(int signum) {
                 refresh();
                 clear();
                 mainScreenEndPos = (pos_t){LINES, COLS};
-                cleanLingeringBorder(mainScreenStartPos, mainScreenPrevEndPos);
+                cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
                 mainScreenPrevEndPos = mainScreenEndPos;
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
