@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
 
 // https://stackoverflow.com/a/30960382
@@ -38,7 +39,8 @@ typedef struct {
 WINDOW *mainScreen = NULL;
 PANEL *mainPanel = NULL;
 
-char displayText[8] = ""; 
+char endPosText[8] = ""; 
+char prevEndPosText[8] = ""; 
 nstr mainTitle = {};
 pos_t mainScreenStartPos   = {};
 pos_t mainScreenEndPos     = {};
@@ -57,9 +59,10 @@ static void handler(int signum) {
                 refresh();
                 clear();
                 mainScreenEndPos = (pos_t){LINES, COLS};
+                sprintf(endPosText, "%3d %3d", LINES, COLS);
+                sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
-                sprintf(displayText, "%3d %3d", LINES, COLS);
-                mvwaddstr(mainScreen, 2, 2, displayText);
+                mvwaddstr(mainScreen, 2, 2, endPosText);
                 refresh();
                 wrefresh(mainScreen);
             }
@@ -74,7 +77,8 @@ int main(int argc, char* argv[]) {
     
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
-    sprintf(displayText, "%3d %3d", LINES, COLS);
+    sprintf(endPosText, "%3d %3d", LINES, COLS);
+    sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
 
     nstr mainTitle = nstrCreate("kernel varients");
 
@@ -84,7 +88,8 @@ int main(int argc, char* argv[]) {
     mainScreenEndPos = (pos_t){LINES, COLS};
     mainScreenPrevEndPos = mainScreenEndPos;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
-    mvwaddnstr(mainScreen, 2, 2, displayText, 8);
+    mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
+    mvwaddnstr(mainScreen, 2, 2, prevEndPosText, 8);
     refresh();
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
@@ -104,9 +109,13 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // Historical record
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
-
+    mvwaddstr(mainScreen, 3, 2, prevEndPosText);
+    sleep(1);
     cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
+    sleep(1);
     mainScreenPrevEndPos = mainScreenEndPos;
+    sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
+    mvwaddstr(mainScreen, 3, 2, prevEndPosText);
 
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
