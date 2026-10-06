@@ -40,8 +40,9 @@ PANEL *mainPanel = NULL;
 
 char displayText[8] = ""; 
 nstr mainTitle = {};
-pos_t mainScreenStartPos = {};
-pos_t mainScreenEndPos   = {};
+pos_t mainScreenStartPos   = {};
+pos_t mainScreenEndPos     = {};
+pos_t mainScreenPrevEndPos = {};
 
 nstr nstrCreate(const char* str);
 int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end);
@@ -53,11 +54,12 @@ static void handler(int signum) {
             {
                 endwin();
                 refresh();
+                clear();
                 mainScreenEndPos.row   = LINES;
                 mainScreenEndPos.col   = COLS;
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
-                mvwaddstr(mainScreen, 2, 2, displayText);
+                mvwinstr(mainScreen, 2, 2, displayText);
                 refresh();
                 wrefresh(mainScreen);
             }
@@ -79,10 +81,10 @@ int main(int argc, char* argv[]) {
     mainScreen = newwin(LINES, COLS, 0, 0);
     mainScreenStartPos.row = 0;
     mainScreenStartPos.col = 0;
-    mainScreenEndPos.row   = LINES;
-    mainScreenEndPos.col   = COLS;
+    mainScreenEndPos = (pos_t){LINES, COLS};
+    mainScreenPrevEndPos = mainScreenEndPos;
     customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
-    mvwaddstr(mainScreen, 2, 2, displayText);
+    mvwinstr(mainScreen, 2, 2, displayText);
     refresh();
     wrefresh(mainScreen);
     mainPanel = new_panel(mainScreen);
@@ -104,10 +106,10 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     // UNUSED: https://stackoverflow.com/a/35712716
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
-    for(int i = 1; i < end.row; i++) waddch(win, ACS_HLINE);
+    for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_URCORNER);
     
-    for(int i = 1; i < end.col; i++) {
+    for(int i = 1; i < end.row; i++) {
         wmove(win, i, 0);
         winsch(win, ACS_VLINE);
         wmove(win, i, end.col-1);
