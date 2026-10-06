@@ -110,7 +110,7 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     for(int i = 1; i < end.row; i++) {
         wmove(win, i, 0);
         winsch(win, ACS_VLINE);
-        wmove(win, i, end.col);
+        wmove(win, i, end.col-1);
         winsch(win, ACS_VLINE);
     }
     wmove(win, end.row, 0);
