@@ -93,13 +93,17 @@ nstr nstrCreate(const char* str) {
 }
 
 int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
-    // https://stackoverflow.com/a/69492307
-    // https://stackoverflow.com/a/35712716
-    cchar_t lhChar = {};
-    setcchar(&lhChar, L"\xe2\x94\x82", 0, 0, 0);
-    mvwprintw(win, 0, 0, "\xe2\x94\x8c%*s\xe2\x94\x90", end.col-1, "\xe2\x94\x80");
-    mvwvline_set(win, 1, 0, &lhChar, start.row-1);
-    mvwvline_set(win, 1, end.col, &lhChar, end.row-1);
+    // Historical record
+    // UNUSED: https://stackoverflow.com/a/69492307
+    // UNUSED: https://stackoverflow.com/a/35712716
+    wmove(win, 0, 0);
+    printf("\u250c%*s\u2510", end.col-1, "\u2500");
+    for(int i = 1; i < end.row; i++) {
+        wmove(win, i, 0);
+        putchar()
+    }
+    mvwvline_set(win, 1, 0, L"\xe2\x94\x82", start.row-1);
+    mvwvline_set(win, 1, end.col, L"\xe2\x94\x82", end.row-1);
     mvwprintw(win, end.row, 0, "\xe2\x94\x94%*s\xe2\x94\x98", end.col-1, "\xe2\x94\x80");
 
     return 0;
