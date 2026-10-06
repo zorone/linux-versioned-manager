@@ -46,6 +46,7 @@ pos_t mainScreenPrevEndPos = {};
 
 nstr nstrCreate(const char* str);
 int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end);
+int cleanLingeringBorder(pos_t prevStartPos, pos_t prevEndPos);
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
@@ -55,8 +56,9 @@ static void handler(int signum) {
                 endwin();
                 refresh();
                 clear();
-                mainScreenEndPos.row   = LINES;
-                mainScreenEndPos.col   = COLS;
+                mainScreenEndPos = (pos_t){LINES, COLS};
+                cleanLingeringBorder(mainScreenStartPos, mainScreenPrevEndPos);
+                mainScreenPrevEndPos = mainScreenEndPos;
                 customBorder(mainScreen, &mainTitle, mainScreenStartPos, mainScreenEndPos);
                 sprintf(displayText, "%3d %3d", LINES, COLS);
                 mvwaddstr(mainScreen, 2, 2, displayText);
@@ -120,5 +122,12 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     for(int i = 1; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_LRCORNER);
 
+    return 0;
+}
+
+int cleanLingeringBorder(pos_t prevStartPos, pos_t prevEndPos) {
+    if(prevEndPos.row < LINES) {
+        for(int i = 1; i < prevEndPos.col; i++) wdelch(win, prevEndPos.row, i);
+    }
     return 0;
 }
