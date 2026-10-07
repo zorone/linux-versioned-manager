@@ -66,7 +66,6 @@ static void handler(int signum) {
                 sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
                 customBorder(mainScreen, mainTitlePtr, &mainScreenInfo);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
-                refresh();
                 wrefresh(mainScreen);
             }
             break;
