@@ -1,4 +1,4 @@
-#include <asm-generic/ioctls.h>
+#include <locale.h>
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
@@ -36,18 +36,21 @@ typedef struct {
     };
 } pos_t;
 
+typedef struct {
+    pos_t startPos;
+    pos_t endPos;
+    pos_t prevEndPos;
+} winInfo_t;
+
 WINDOW *mainScreen = NULL;
-PANEL *mainPanel = NULL;
 
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
 static nstr* mainTitlePtr = 0;
-pos_t mainScreenStartPos   = {};
-pos_t mainScreenEndPos     = {};
-pos_t mainScreenPrevEndPos = {};
+winInfo_t mainScreenInfo = {};
 
 nstr nstrCreate(char* str);
-int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end);
+int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo);
 int cleanLingeringBorder(WINDOW* win, pos_t prevStartPos, pos_t prevEndPos);
 
 // https://stackoverflow.com/a/13707598
@@ -58,10 +61,10 @@ static void handler(int signum) {
                 endwin();
                 refresh();
                 clear();
-                mainScreenEndPos = (pos_t){LINES, COLS};
+                mainScreenInfo.endPos = (pos_t){LINES, COLS};
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
-                sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
-                customBorder(mainScreen, mainTitlePtr, mainScreenStartPos, mainScreenEndPos);
+                sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
+                customBorder(mainScreen, mainTitlePtr, &mainScreenInfo);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
                 refresh();
                 wrefresh(mainScreen);
@@ -78,21 +81,20 @@ int main(int argc, char* argv[]) {
     nstr mainTitle = nstrCreate("kernel varients"); 
     mainTitlePtr = &mainTitle;
 
+    setlocale(LC_ALL, "");
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
     sprintf(endPosText, "%3d %3d", LINES, COLS);
-    sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
-
+    sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
 
     mainScreen = newwin(LINES, COLS, 0, 0);
-    mainScreenStartPos = (pos_t){0, 0};
-    mainScreenEndPos   = (pos_t){LINES, COLS};
-    mainScreenPrevEndPos = mainScreenEndPos;
-    customBorder(mainScreen, mainTitlePtr, mainScreenStartPos, mainScreenEndPos);
+    mainScreenInfo.startPos = (pos_t){0, 0};
+    mainScreenInfo.endPos   = (pos_t){LINES, COLS};
+    mainScreenInfo.prevEndPos = mainScreenInfo.endPos;
+    customBorder(mainScreen, mainTitlePtr, &mainScreenInfo);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
     wrefresh(mainScreen);
-    mainPanel = new_panel(mainScreen);
 
     while(getch() != 'q');
     endwin();
@@ -106,12 +108,12 @@ nstr nstrCreate(char* str) {
     return (nstr){str, len};
 }
 
-int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
+int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
     // Historical record
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
-    cleanLingeringBorder(mainScreen, mainScreenStartPos, mainScreenPrevEndPos);
-    mainScreenPrevEndPos = mainScreenEndPos;
+    cleanLingeringBorder(win, winInfo->startPos, winInfo->prevEndPos);
+    winInfo->prevEndPos = winInfo->endPos;
 
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
@@ -120,18 +122,18 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     waddch(win, ' ');
     waddnstr(win, title->str, title->len);
     waddch(win, ' ');
-    for(int i = 6+title->len; i < end.col; i++) waddch(win, ACS_HLINE);
+    for(int i = 6+title->len; i < winInfo->endPos.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_URCORNER);
     
-    for(int i = 1; i < end.row; i++) {
+    for(int i = 1; i < winInfo->endPos.row; i++) {
         wmove(win, i, 0);
         waddch(win, ACS_VLINE);
-        wmove(win, i, end.col-1);
+        wmove(win, i, winInfo->endPos.col-1);
         waddch(win, ACS_VLINE);
     }
-    wmove(win, end.row-1, 0);
+    wmove(win, winInfo->endPos.row-1, 0);
     waddch(win, ACS_LLCORNER);
-    for(int i = 2; i < end.col; i++) waddch(win, ACS_HLINE);
+    for(int i = 2; i < winInfo->endPos.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_LRCORNER);
 
     return 0;
