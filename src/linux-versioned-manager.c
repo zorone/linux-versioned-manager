@@ -114,11 +114,10 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
     waddch(win, ACS_ULCORNER);
     waddch(win, ACS_HLINE);
     waddch(win, ACS_HLINE);
-    waddch(win, ACS_HLINE);
-    waddch(win, ACS_HLINE);
     waddch(win, ' ');
+    waddnstr(win, title->str, title->len);
     waddch(win, ' ');
-    for(int i = 8; i < end.col; i++) waddch(win, ACS_HLINE);
+    for(int i = 6+title->len; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_URCORNER);
     
     for(int i = 1; i < end.row; i++) {
