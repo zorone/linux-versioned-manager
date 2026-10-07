@@ -112,7 +112,14 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
 
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
-    for(int i = 2; i < end.col; i++) waddch(win, ACS_HLINE);
+    waddch(win, ACS_LLCORNER);
+    waddch(win, ACS_HLINE);
+    waddch(win, ACS_HLINE);
+    waddch(win, ACS_HLINE);
+    waddch(win, ACS_HLINE);
+    waddch(win, ' ');
+    waddch(win, ' ');
+    for(int i = 8; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_URCORNER);
     
     for(int i = 1; i < end.row; i++) {
@@ -122,14 +129,7 @@ int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
         waddch(win, ACS_VLINE);
     }
     wmove(win, end.row-1, 0);
-    waddch(win, ACS_LLCORNER);
-    waddch(win, ACS_HLINE);
-    waddch(win, ACS_HLINE);
-    waddch(win, ACS_HLINE);
-    waddch(win, ACS_HLINE);
-    waddch(win, ' ');
-    waddch(win, ' ');
-    for(int i = 8; i < end.col; i++) waddch(win, ACS_HLINE);
+    for(int i = 2; i < end.col; i++) waddch(win, ACS_HLINE);
     waddch(win, ACS_LRCORNER);
 
     return 0;
