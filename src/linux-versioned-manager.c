@@ -41,12 +41,12 @@ PANEL *mainPanel = NULL;
 
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
-static nstr* mainTitle;
+static nstr* mainTitlePtr = 0;
 pos_t mainScreenStartPos   = {};
 pos_t mainScreenEndPos     = {};
 pos_t mainScreenPrevEndPos = {};
 
-nstr* nstrCreate(char* str);
+nstr nstrCreate(char* str);
 int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end);
 int cleanLingeringBorder(WINDOW* win, pos_t prevStartPos, pos_t prevEndPos);
 
@@ -61,7 +61,7 @@ static void handler(int signum) {
                 mainScreenEndPos = (pos_t){LINES, COLS};
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
                 sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
-                customBorder(mainScreen, mainTitle, mainScreenStartPos, mainScreenEndPos);
+                customBorder(mainScreen, mainTitlePtr, mainScreenStartPos, mainScreenEndPos);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
                 refresh();
                 wrefresh(mainScreen);
@@ -75,18 +75,20 @@ int main(int argc, char* argv[]) {
     sigaction_t sa = { .sa_handler=handler };
     sigaction(SIGWINCH, &sa, NULL);
     
+    nstr mainTitle = nstrCreate("kernel varients"); 
+    mainTitlePtr = &mainTitle;
+
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
     sprintf(endPosText, "%3d %3d", LINES, COLS);
     sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
 
-    mainTitle = nstrCreate("kernel varients");
 
     mainScreen = newwin(LINES, COLS, 0, 0);
     mainScreenStartPos = (pos_t){0, 0};
     mainScreenEndPos   = (pos_t){LINES, COLS};
     mainScreenPrevEndPos = mainScreenEndPos;
-    customBorder(mainScreen, mainTitle, mainScreenStartPos, mainScreenEndPos);
+    customBorder(mainScreen, mainTitlePtr, mainScreenStartPos, mainScreenEndPos);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
     wrefresh(mainScreen);
@@ -99,9 +101,9 @@ int main(int argc, char* argv[]) {
 
 // https://stackoverflow.com/a/65848356
 // https://stackoverflow.com/a/73945800
-nstr* nstrCreate(char* str) {
+nstr nstrCreate(char* str) {
     unsigned int len = strlen(str);
-    return &(nstr){str, len};
+    return (nstr){str, len};
 }
 
 int customBorder(WINDOW* win, nstr* title, pos_t start, pos_t end) {
