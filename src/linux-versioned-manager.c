@@ -51,7 +51,7 @@ winInfo_t mainScreenInfo = {};
 
 nstr nstrCreate(char* str);
 int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo);
-int cleanLingeringBorder(WINDOW* win, pos_t prevStartPos, pos_t prevEndPos);
+int cleanLingeringBorder(WINDOW* win, winInfo_t* winInfo);
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
@@ -66,6 +66,7 @@ static void handler(int signum) {
                 sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
                 customBorder(mainScreen, mainTitlePtr, &mainScreenInfo);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
+                refresh();
                 wrefresh(mainScreen);
             }
             break;
@@ -111,7 +112,7 @@ int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
     // Historical record
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
-    cleanLingeringBorder(win, winInfo->startPos, winInfo->prevEndPos);
+    cleanLingeringBorder(win, winInfo);
     winInfo->prevEndPos = winInfo->endPos;
 
     wmove(win, 0, 0);
@@ -138,14 +139,14 @@ int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
     return 0;
 }
 
-int cleanLingeringBorder(WINDOW* win, pos_t prevStartPos, pos_t prevEndPos) {
-    if(prevEndPos.row < LINES) {
-        wmove(win, prevEndPos.row-1, 1);
-        for(int i = 1; i < prevEndPos.col; i++) waddch(win, ' ');
+int cleanLingeringBorder(WINDOW* win, winInfo_t* winInfo) {
+    if(winInfo->prevEndPos.row < LINES) {
+        wmove(win, winInfo->prevEndPos.row-1, 1);
+        for(int i = 1; i < winInfo->prevEndPos.col; i++) waddch(win, ' ');
     }
-    if(prevEndPos.col < COLS) {
-        for(int i = 1; i < prevEndPos.row; i++) {
-            wmove(win, i, prevEndPos.col-1);
+    if(winInfo->prevEndPos.col < COLS) {
+        for(int i = 1; i < winInfo->prevEndPos.row; i++) {
+            wmove(win, i, winInfo->prevEndPos.col-1);
             waddch(win, ' ');
         }
     }
