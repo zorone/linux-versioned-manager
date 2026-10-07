@@ -41,7 +41,7 @@ PANEL *mainPanel = NULL;
 
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
-nstr mainTitle = {};
+static nstr mainTitle;
 pos_t mainScreenStartPos   = {};
 pos_t mainScreenEndPos     = {};
 pos_t mainScreenPrevEndPos = {};
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
     sprintf(endPosText, "%3d %3d", LINES, COLS);
     sprintf(prevEndPosText, "%3d %3d", mainScreenPrevEndPos.row, mainScreenPrevEndPos.col);
 
-    nstr mainTitle = nstrCreate("kernel varients");
+    mainTitle = nstrCreate("kernel varients");
 
     mainScreen = newwin(LINES, COLS, 0, 0);
     mainScreenStartPos = (pos_t){0, 0};
@@ -97,6 +97,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+// https://stackoverflow.com/a/65848356
 nstr nstrCreate(const char* str) {
     unsigned int len = strlen(str);
     nstr tmp = {.str=str, .len=len};
