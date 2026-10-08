@@ -47,6 +47,7 @@ WINDOW *versionSelectorWin = NULL;
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
 static nstr* variantSelectorTitlePtr = 0;
+static nstr* versionSelectorTitlePtr = 0;
 winInfo_t mainScreenInfo = {};
 winInfo_t variantSelectorWinInfo = {};
 winInfo_t versionSelectorWinInfo = {};
@@ -64,12 +65,16 @@ static void handler(int signum) {
                 refresh();
                 clear();
                 mainScreenInfo.endPos = (pos_t){LINES, COLS};
+                variantSelectorWinInfo.endPos = (pos_t){LINES, 24};
+                versionSelectorWinInfo.endPos = (pos_t){LINES, COLS-24};
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
                 sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
                 customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
+                customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
                 refresh();
                 wrefresh(variantSelectorWin);
+                wrefresh(versionSelectorWin);
             }
             break;
         default:
@@ -82,6 +87,8 @@ int main(int argc, char* argv[]) {
     
     nstr variantSelectorTitle = nstrCreate("kernel varients"); 
     variantSelectorTitlePtr = &variantSelectorTitle;
+    nstr versionSelectorTitle = nstrCreate("kernel versions"); 
+    versionSelectorTitlePtr = &versionSelectorTitle;
 
     setlocale(LC_ALL, "");
     initscr(); cbreak(); noecho();
@@ -98,7 +105,12 @@ int main(int argc, char* argv[]) {
     variantSelectorWinInfo.startPos   = (pos_t){0, 0};
     variantSelectorWinInfo.endPos     = (pos_t){LINES, 24};
     variantSelectorWinInfo.prevEndPos = variantSelectorWinInfo.endPos;
-    customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
+
+    versionSelectorWin = subwin(mainScreen, LINES, COLS-24, 0, 24);
+    versionSelectorWinInfo.startPos   = (pos_t){0, 0};
+    versionSelectorWinInfo.endPos     = (pos_t){LINES, COLS-24};
+    versionSelectorWinInfo.prevEndPos = versionSelectorWinInfo.endPos;
+    customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
     wsyncup(variantSelectorWin);
