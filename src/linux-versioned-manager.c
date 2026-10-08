@@ -68,6 +68,7 @@ static void handler(int signum) {
                 variantSelectorWinInfo.endPos = (pos_t){LINES, 24};
                 versionSelectorWinInfo.endPos = (pos_t){LINES, COLS-24};
                 wresize(versionSelectorWin, versionSelectorWinInfo.endPos.col, versionSelectorWinInfo.endPos.row);
+                wsyncup(versionSelectorWin);
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
                 customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
                 // customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
