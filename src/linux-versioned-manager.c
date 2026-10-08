@@ -69,9 +69,8 @@ static void handler(int signum) {
                 versionSelectorWinInfo.endPos = (pos_t){LINES, COLS-24};
                 wresize(versionSelectorWin, versionSelectorWinInfo.endPos.col, versionSelectorWinInfo.endPos.row);
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
-                sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
                 customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
-                customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
+                // customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
                 refresh();
                 wrefresh(variantSelectorWin);
@@ -95,7 +94,6 @@ int main(int argc, char* argv[]) {
     initscr(); cbreak(); noecho();
     keypad(stdscr, TRUE);
     sprintf(endPosText, "%3d %3d", LINES, COLS);
-    sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
 
     mainScreen = newwin(LINES, COLS, 0, 0);
     mainScreenInfo.startPos = (pos_t){0, 0};
@@ -113,7 +111,8 @@ int main(int argc, char* argv[]) {
     versionSelectorWinInfo.prevEndPos = versionSelectorWinInfo.endPos;
     
     customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
-    customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
+    // customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
+    wbkgd(versionSelectorWin, '+');
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
     wsyncup(variantSelectorWin);
