@@ -67,6 +67,7 @@ static void handler(int signum) {
                 mainScreenInfo.endPos = (pos_t){LINES, COLS};
                 variantSelectorWinInfo.endPos = (pos_t){LINES, 24};
                 versionSelectorWinInfo.endPos = (pos_t){LINES, COLS-24};
+                wresize(versionSelectorWin, versionSelectorWinInfo.endPos.col, versionSelectorWinInfo.endPos.row);
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
                 sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
                 customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
