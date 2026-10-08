@@ -114,7 +114,8 @@ int main(int argc, char* argv[]) {
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
     wsyncup(variantSelectorWin);
-    wrefresh(variantSelectorWin);
+    wsyncup(versionSelectorWin);
+    wrefresh(mainScreen);
 
     while(getch() != 'q');
     endwin();
