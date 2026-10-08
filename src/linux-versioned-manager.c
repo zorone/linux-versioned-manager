@@ -69,11 +69,10 @@ static void handler(int signum) {
                 versionSelectorWinInfo.endPos = (pos_t){LINES, COLS-24};
                 delwin(versionSelectorWin);
                 subwin(mainScreen, LINES, COLS-24, 0, 24);
-                wbkgd(versionSelectorWin, '+');
                 wsyncup(versionSelectorWin);
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
                 customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
-                // customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
+                customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
                 refresh();
                 wrefresh(variantSelectorWin);
@@ -114,8 +113,7 @@ int main(int argc, char* argv[]) {
     versionSelectorWinInfo.prevEndPos = versionSelectorWinInfo.endPos;
     
     customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
-    // customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
-    wbkgd(versionSelectorWin, '+');
+    customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
     wsyncup(variantSelectorWin);
