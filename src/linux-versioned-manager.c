@@ -9,11 +9,9 @@
 #define _XOPEN_SOURCE_EXTENDED
 
 #ifdef __MINGW32__
-#include <ncurses/ncurses.h>
-    #include <ncurses/panel.h>
+    #include <ncurses/ncurses.h>
 #else
-    #include <ncurses.h>
-    #include <panel.h>
+    #include <curses.h>
 #endif
 
 typedef struct sigaction sigaction_t;
@@ -43,11 +41,15 @@ typedef struct {
 } winInfo_t;
 
 WINDOW *mainScreen = NULL;
+WINDOW *variantSelectorWin = NULL;
+WINDOW *versionSelectorWin = NULL;
 
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
-static nstr* mainTitlePtr = 0;
+static nstr* variantSelectorTitlePtr = 0;
 winInfo_t mainScreenInfo = {};
+winInfo_t variantSelectorWinInfo = {};
+winInfo_t versionSelectorWinInfo = {};
 
 nstr nstrCreate(char* str);
 int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo);
@@ -64,10 +66,10 @@ static void handler(int signum) {
                 mainScreenInfo.endPos = (pos_t){LINES, COLS};
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
                 sprintf(prevEndPosText, "%3d %3d", mainScreenInfo.prevEndPos.row, mainScreenInfo.prevEndPos.col);
-                customBorder(mainScreen, mainTitlePtr, &mainScreenInfo);
+                customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
                 mvwaddstr(mainScreen, 2, 2, endPosText);
                 refresh();
-                wrefresh(mainScreen);
+                wrefresh(variantSelectorWin);
             }
             break;
         default:
@@ -78,8 +80,8 @@ int main(int argc, char* argv[]) {
     sigaction_t sa = { .sa_handler=handler };
     sigaction(SIGWINCH, &sa, NULL);
     
-    nstr mainTitle = nstrCreate("kernel varients"); 
-    mainTitlePtr = &mainTitle;
+    nstr variantSelectorTitle = nstrCreate("kernel varients"); 
+    variantSelectorTitlePtr = &variantSelectorTitle;
 
     setlocale(LC_ALL, "");
     initscr(); cbreak(); noecho();
@@ -91,10 +93,16 @@ int main(int argc, char* argv[]) {
     mainScreenInfo.startPos = (pos_t){0, 0};
     mainScreenInfo.endPos   = (pos_t){LINES, COLS};
     mainScreenInfo.prevEndPos = mainScreenInfo.endPos;
-    customBorder(mainScreen, mainTitlePtr, &mainScreenInfo);
+
+    variantSelectorWin = subwin(mainScreen, LINES, 24, 0, 0);
+    variantSelectorWinInfo.startPos   = (pos_t){0, 0};
+    variantSelectorWinInfo.endPos     = (pos_t){LINES, 24};
+    variantSelectorWinInfo.prevEndPos = variantSelectorWinInfo.endPos;
+    customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
-    wrefresh(mainScreen);
+    wsyncup(variantSelectorWin);
+    wrefresh(variantSelectorWin);
 
     while(getch() != 'q');
     endwin();
