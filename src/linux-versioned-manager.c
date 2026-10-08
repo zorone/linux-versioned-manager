@@ -110,6 +110,8 @@ int main(int argc, char* argv[]) {
     versionSelectorWinInfo.startPos   = (pos_t){0, 0};
     versionSelectorWinInfo.endPos     = (pos_t){LINES, COLS-24};
     versionSelectorWinInfo.prevEndPos = versionSelectorWinInfo.endPos;
+    
+    customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
     customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
     mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
     refresh();
