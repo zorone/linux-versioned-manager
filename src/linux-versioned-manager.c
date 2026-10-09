@@ -141,7 +141,7 @@ int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
 
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
-    if(title->len+8 <= winInfo->endPos.col) {
+    if(title->len+6 <= winInfo->endPos.col) {
         waddch(win, ACS_HLINE);
         waddch(win, ACS_HLINE);
         waddch(win, ' ');
