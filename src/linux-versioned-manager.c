@@ -150,15 +150,18 @@ int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
         whline(win, ACS_HLINE, winInfo->endPos.col-(6+title->len));
     }
     else whline(win, ACS_HLINE, winInfo->endPos.col-2);
+    wmove(win, 0, winInfo->endPos.col-1);
     waddch(win, ACS_URCORNER);
     
     wmove(win, 1, 0);
     wvline(win, ACS_VLINE, winInfo->endPos.row-1);
     wmove(win, 1, winInfo->endPos.col-1);
-    
+    wvline(win, ACS_VLINE, winInfo->endPos.row-1);
+
     wmove(win, winInfo->endPos.row-1, 0);
     waddch(win, ACS_LLCORNER);
     whline(win, ACS_HLINE, winInfo->endPos.col-2);
+    wmove(win, winInfo->endPos.row-1, winInfo->endPos.col-1);
     waddch(win, ACS_LRCORNER);
 
     return 0;
