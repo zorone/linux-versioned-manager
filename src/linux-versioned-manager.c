@@ -35,26 +35,25 @@ typedef struct {
 } pos_t;
 
 typedef struct {
+    WINDOW* win;
     pos_t startPos;
     pos_t endPos;
     pos_t prevEndPos;
-} winInfo_t;
-
-WINDOW *mainScreen = NULL;
-WINDOW *variantSelectorWin = NULL;
-WINDOW *versionSelectorWin = NULL;
+} win_t;
 
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
 static nstr* variantSelectorTitlePtr = 0;
 static nstr* versionSelectorTitlePtr = 0;
-winInfo_t mainScreenInfo = {};
-winInfo_t variantSelectorWinInfo = {};
-winInfo_t versionSelectorWinInfo = {};
+win_t mainScreen = {};
+win_t variantSelectorWin  = {};
+win_t variantSelectorInfo = {};
+win_t versionSelectorWin  = {};
+win_t versionSelectorInfo = {};
 
 nstr nstrCreate(char* str);
-int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo);
-int cleanLingeringBorder(WINDOW* win, winInfo_t* winInfo);
+int customBorder(WINDOW* win, nstr* title, win_t* winInfo);
+int cleanLingeringBorder(WINDOW* win, win_t* winInfo);
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
@@ -64,19 +63,26 @@ static void handler(int signum) {
                 endwin();
                 refresh();
                 clear();
-                mainScreenInfo.endPos = (pos_t){LINES, COLS};
-                variantSelectorWinInfo.endPos = (pos_t){LINES, 24};
-                versionSelectorWinInfo.endPos = (pos_t){LINES, COLS-24};
-                delwin(versionSelectorWin);
-                subwin(mainScreen, LINES, COLS-24, 0, 24);
-                wsyncup(versionSelectorWin);
+                mainScreen.endPos = (pos_t){LINES, COLS};
+                variantSelectorWin.endPos  = (pos_t){LINES, 24};
+                variantSelectorInfo.endPos = (pos_t){LINES-4, 20};
+                versionSelectorWin.endPos  = (pos_t){LINES, COLS-24};
+                versionSelectorInfo.endPos = (pos_t){LINES-4, COLS-28};
+                delwin(variantSelectorInfo.win);
+                delwin(versionSelectorInfo.win);
+                delwin(versionSelectorWin.win);
+                variantSelectorInfo.win = subwin(variantSelectorWin.win, LINES-4, 20, 2, 2);
+                versionSelectorWin.win  = subwin(mainScreen.win, LINES, COLS-24, 0, 24);
+                versionSelectorInfo.win = subwin(versionSelectorWin.win, LINES-4, COLS-28, 2, 26);
+                wsyncup(variantSelectorInfo.win);
+                wsyncup(versionSelectorInfo.win);
                 sprintf(endPosText, "%3d %3d", LINES, COLS);
-                customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
-                customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
-                mvwaddstr(mainScreen, 2, 2, endPosText);
+                customBorder(variantSelectorWin.win, variantSelectorTitlePtr, &variantSelectorWin);
+                customBorder(versionSelectorWin.win, versionSelectorTitlePtr, &versionSelectorWin);
+                mvwaddstr(variantSelectorInfo.win, 0, 0, endPosText);
                 refresh();
-                wrefresh(variantSelectorWin);
-                wrefresh(versionSelectorWin);
+                wrefresh(variantSelectorWin.win);
+                wrefresh(versionSelectorWin.win);
             }
             break;
         default:
@@ -97,28 +103,38 @@ int main(int argc, char* argv[]) {
     keypad(stdscr, TRUE);
     sprintf(endPosText, "%3d %3d", LINES, COLS);
 
-    mainScreen = newwin(LINES, COLS, 0, 0);
-    mainScreenInfo.startPos = (pos_t){0, 0};
-    mainScreenInfo.endPos   = (pos_t){LINES, COLS};
-    mainScreenInfo.prevEndPos = mainScreenInfo.endPos;
+    mainScreen.win = newwin(LINES, COLS, 0, 0);
+    mainScreen.startPos = (pos_t){0, 0};
+    mainScreen.endPos   = (pos_t){LINES, COLS};
+    mainScreen.prevEndPos = mainScreen.endPos;
 
-    variantSelectorWin = subwin(mainScreen, LINES, 24, 0, 0);
-    variantSelectorWinInfo.startPos   = (pos_t){0, 0};
-    variantSelectorWinInfo.endPos     = (pos_t){LINES, 24};
-    variantSelectorWinInfo.prevEndPos = variantSelectorWinInfo.endPos;
+    variantSelectorWin.win = subwin(mainScreen.win, LINES, 24, 0, 0);
+    variantSelectorWin.startPos   = (pos_t){0, 0};
+    variantSelectorWin.endPos     = (pos_t){LINES, 24};
+    variantSelectorWin.prevEndPos = variantSelectorWin.endPos;
 
-    versionSelectorWin = subwin(mainScreen, LINES, COLS-24, 0, 24);
-    versionSelectorWinInfo.startPos   = (pos_t){0, 0};
-    versionSelectorWinInfo.endPos     = (pos_t){LINES, COLS-24};
-    versionSelectorWinInfo.prevEndPos = versionSelectorWinInfo.endPos;
+    variantSelectorInfo.win = subwin(variantSelectorWin.win, LINES-4, 20, 2, 2);
+    variantSelectorInfo.startPos   = (pos_t){0, 0};
+    variantSelectorInfo.endPos     = (pos_t){LINES-4, 20};
+    variantSelectorInfo.prevEndPos = variantSelectorInfo.endPos;
+
+    versionSelectorWin.win = subwin(mainScreen.win, LINES, COLS-24, 0, 24);
+    versionSelectorWin.startPos   = (pos_t){0, 0};
+    versionSelectorWin.endPos     = (pos_t){LINES, COLS-24};
+    versionSelectorWin.prevEndPos = versionSelectorWin.endPos;
+
+    versionSelectorInfo.win = subwin(versionSelectorWin.win, LINES-4, COLS-28, 2, 26);
+    versionSelectorInfo.startPos   = (pos_t){0, 0};
+    versionSelectorInfo.endPos     = (pos_t){LINES-4, COLS-28};
+    versionSelectorInfo.prevEndPos = versionSelectorInfo.endPos;
     
-    customBorder(variantSelectorWin, variantSelectorTitlePtr, &variantSelectorWinInfo);
-    customBorder(versionSelectorWin, versionSelectorTitlePtr, &versionSelectorWinInfo);
-    mvwaddnstr(mainScreen, 2, 2, endPosText, 8);
+    customBorder(variantSelectorWin.win, variantSelectorTitlePtr, &variantSelectorWin);
+    customBorder(versionSelectorWin.win, versionSelectorTitlePtr, &versionSelectorWin);
+    mvwaddnstr(variantSelectorInfo.win, 0, 0, endPosText, 8);
     refresh();
-    wsyncup(variantSelectorWin);
-    wsyncup(versionSelectorWin);
-    wrefresh(mainScreen);
+    wsyncup(variantSelectorInfo.win);
+    wsyncup(versionSelectorInfo.win);
+    wrefresh(mainScreen.win);
 
     while(getch() != 'q');
     endwin();
@@ -132,7 +148,7 @@ nstr nstrCreate(char* str) {
     return (nstr){str, len};
 }
 
-int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
+int customBorder(WINDOW* win, nstr* title, win_t* winInfo) {
     // Historical record
     // UNUSED: https://stackoverflow.com/a/69492307
     // UNUSED: https://stackoverflow.com/a/35712716
@@ -141,7 +157,7 @@ int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
 
     wmove(win, 0, 0);
     waddch(win, ACS_ULCORNER);
-    if(title->len+6 <= winInfo->endPos.col) {
+    if(title->len+8 <= winInfo->endPos.col) {
         waddch(win, ACS_HLINE);
         waddch(win, ACS_HLINE);
         waddch(win, ' ');
@@ -167,7 +183,7 @@ int customBorder(WINDOW* win, nstr* title, winInfo_t* winInfo) {
     return 0;
 }
 
-int cleanLingeringBorder(WINDOW* win, winInfo_t* winInfo) {
+int cleanLingeringBorder(WINDOW* win, win_t* winInfo) {
     if(winInfo->prevEndPos.row < LINES) {
         wmove(win, winInfo->prevEndPos.row-1, 1);
         for(int i = 1; i < winInfo->prevEndPos.col; i++) waddch(win, ' ');
