@@ -41,6 +41,15 @@ typedef struct {
     pos_t prevEndPos;
 } win_t;
 
+typedef struct {
+    size_t count;
+    nstr** content;
+} tabContent_t;
+typedef struct {
+    nstr* title;
+    tabContent_t content;
+} tabData_t;
+
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
 static nstr* variantSelectorTitlePtr = 0;
@@ -51,39 +60,19 @@ win_t variantSelectorInfo = {};
 win_t versionSelectorWin  = {};
 win_t versionSelectorInfo = {};
 
-nstr nstrCreate(char* str);
+nstr createNstr(char* str);
+nstr* createNstrList(char** strList);
+tabData_t createTabDataList(nstr** tabNameList);
 int customBorder(WINDOW* win, nstr* title, win_t* winInfo);
 int cleanLingeringBorder(WINDOW* win, win_t* winInfo);
+
+int refreshFlag = 0;
 
 // https://stackoverflow.com/a/13707598
 static void handler(int signum) {
     switch(signum) {
         case SIGWINCH:
-            {
-                endwin();
-                refresh();
-                clear();
-                mainScreen.endPos = (pos_t){LINES, COLS};
-                variantSelectorWin.endPos  = (pos_t){LINES, 24};
-                variantSelectorInfo.endPos = (pos_t){LINES-4, 20};
-                versionSelectorWin.endPos  = (pos_t){LINES, COLS-24};
-                versionSelectorInfo.endPos = (pos_t){LINES-4, COLS-28};
-                delwin(variantSelectorInfo.win);
-                delwin(versionSelectorInfo.win);
-                delwin(versionSelectorWin.win);
-                variantSelectorInfo.win = subwin(variantSelectorWin.win, LINES-4, 20, 2, 2);
-                versionSelectorWin.win  = subwin(mainScreen.win, LINES, COLS-24, 0, 24);
-                versionSelectorInfo.win = subwin(versionSelectorWin.win, LINES-4, COLS-28, 2, 26);
-                wsyncup(variantSelectorInfo.win);
-                wsyncup(versionSelectorInfo.win);
-                sprintf(endPosText, "%3d %3d", LINES, COLS);
-                customBorder(variantSelectorWin.win, variantSelectorTitlePtr, &variantSelectorWin);
-                customBorder(versionSelectorWin.win, versionSelectorTitlePtr, &versionSelectorWin);
-                mvwaddstr(variantSelectorInfo.win, 0, 0, endPosText);
-                refresh();
-                wrefresh(variantSelectorWin.win);
-                wrefresh(versionSelectorWin.win);
-            }
+            if (!refreshFlag) refreshFlag = 1;
             break;
         default:
     }
@@ -93,9 +82,9 @@ int main(int argc, char* argv[]) {
     sigaction_t sa = { .sa_handler=handler };
     sigaction(SIGWINCH, &sa, NULL);
     
-    nstr variantSelectorTitle = nstrCreate("kernel varients"); 
+    nstr variantSelectorTitle = createNstr("kernel varients"); 
     variantSelectorTitlePtr = &variantSelectorTitle;
-    nstr versionSelectorTitle = nstrCreate("kernel versions"); 
+    nstr versionSelectorTitle = createNstr("kernel versions"); 
     versionSelectorTitlePtr = &versionSelectorTitle;
 
     setlocale(LC_ALL, "");
@@ -107,6 +96,7 @@ int main(int argc, char* argv[]) {
     mainScreen.startPos = (pos_t){0, 0};
     mainScreen.endPos   = (pos_t){LINES, COLS};
     mainScreen.prevEndPos = mainScreen.endPos;
+    nodelay(mainScreen.win, TRUE);
 
     variantSelectorWin.win = subwin(mainScreen.win, LINES, 24, 0, 0);
     variantSelectorWin.startPos   = (pos_t){0, 0};
@@ -143,7 +133,7 @@ int main(int argc, char* argv[]) {
 
 // https://stackoverflow.com/a/65848356
 // https://stackoverflow.com/a/73945800
-nstr nstrCreate(char* str) {
+nstr createNstr(char* str) {
     unsigned int len = strlen(str);
     return (nstr){str, len};
 }
@@ -195,5 +185,34 @@ int cleanLingeringBorder(WINDOW* win, win_t* winInfo) {
         }
     }
 
+    return 0;
+}
+
+int resizeScreen() {
+    endwin();
+    refresh();
+    clear();
+    mainScreen.endPos = (pos_t){LINES, COLS};
+    variantSelectorWin.endPos  = (pos_t){LINES, 24};
+    variantSelectorInfo.endPos = (pos_t){LINES-4, 20};
+    versionSelectorWin.endPos  = (pos_t){LINES, COLS-24};
+    versionSelectorInfo.endPos = (pos_t){LINES-4, COLS-28};
+    delwin(variantSelectorInfo.win);
+    delwin(versionSelectorInfo.win);
+    delwin(versionSelectorWin.win);
+    variantSelectorInfo.win = subwin(variantSelectorWin.win, LINES-4, 20, 2, 2);
+    versionSelectorWin.win  = subwin(mainScreen.win, LINES, COLS-24, 0, 24);
+    versionSelectorInfo.win = subwin(versionSelectorWin.win, LINES-4, COLS-28, 2, 26);
+    wsyncup(variantSelectorInfo.win);
+    wsyncup(versionSelectorInfo.win);
+    sprintf(endPosText, "%3d %3d", LINES, COLS);
+    customBorder(variantSelectorWin.win, variantSelectorTitlePtr, &variantSelectorWin);
+    customBorder(versionSelectorWin.win, versionSelectorTitlePtr, &versionSelectorWin);
+    mvwaddstr(variantSelectorInfo.win, 0, 0, endPosText);
+    refresh();
+    wrefresh(variantSelectorWin.win);
+    wrefresh(versionSelectorWin.win);
+
+    refreshFlag = 0;
     return 0;
 }
