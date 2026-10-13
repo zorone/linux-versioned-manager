@@ -19,7 +19,7 @@ typedef struct winsize winsize_t;
 winsize_t winsz;
 
 typedef struct {
-    const char* str;
+    char* str;
     const unsigned int len;
 } nstr;
 
@@ -70,7 +70,7 @@ win_t variantSelectorInfo = {};
 win_t versionSelectorWin  = {};
 win_t versionSelectorInfo = {};
 
-nstr createNstr(char* str);
+nstr* createNstr(char* str);
 nstrArray_t createNstrList(char** strList);
 tabData_t* createTabDataList(nstrArray_t* tabNamesList, size_t tabsCount);
 int customBorder(WINDOW* win, nstr* title, win_t* winInfo);
@@ -92,10 +92,8 @@ int main(int argc, char* argv[]) {
     sigaction_t sa = { .sa_handler=handler };
     sigaction(SIGWINCH, &sa, NULL);
     
-    nstr variantSelectorTitle = createNstr("kernel varients"); 
-    variantSelectorTitlePtr = &variantSelectorTitle;
-    nstr versionSelectorTitle = createNstr("kernel versions"); 
-    versionSelectorTitlePtr = &versionSelectorTitle;
+    variantSelectorTitlePtr = createNstr("kernel varients");
+    versionSelectorTitlePtr = createNstr("kernel versions");
 
     setlocale(LC_ALL, "");
     initscr(); cbreak(); noecho();
@@ -143,16 +141,18 @@ int main(int argc, char* argv[]) {
 
 // https://stackoverflow.com/a/65848356
 // https://stackoverflow.com/a/73945800
-nstr createNstr(char* str) {
+nstr* createNstr(char* str) {
     unsigned int len = strlen(str);
-    return (nstr){str, len};
+    static nstr tmp = { .len=len };
+    tmp.str = str;
+    return &tmp;
 }
 
 nstrArray_t createNstrList(char** strList) {
     size_t count = 0;
     for( ; strList[count] != NULL; count++);
-    nstr dataTmp[count];
-    for(int i = 0; i < count; i++) dataTmp[i] = createNstr(strList[i]);
+    nstr** dataTmp;
+    for(int i = 0; i < count; i++) *dataTmp[i] = createNstr(strList[i]);
     static nstrArray_t tmp;
 }
 
