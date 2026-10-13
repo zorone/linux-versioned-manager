@@ -151,7 +151,8 @@ nstr createNstr(char* str) {
 nstrArray_t createNstrList(char** strList) {
     size_t count = 0;
     for( ; strList[count] != NULL; count++);
-    static nstr dataTmp[count];
+    nstr dataTmp[count];
+    for(int i = 0; i < count; i++) dataTmp[i] = createNstr(strList[i]);
     static nstrArray_t tmp;
 }
 
