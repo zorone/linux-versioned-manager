@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
 // https://stackoverflow.com/a/73945800
 nstr* createNstr(char* str) {
     unsigned int len = strlen(str);
-    static nstr tmp = { .len=len };
+    static nstr tmp = (nstr){ str, len };
     tmp.str = str;
     return &tmp;
 }
