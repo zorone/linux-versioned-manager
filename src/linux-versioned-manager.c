@@ -24,6 +24,11 @@ typedef struct {
 } nstr;
 
 typedef struct {
+    const size_t count; 
+    const nstr* list;
+} nstrArray_t;
+
+typedef struct {
     union {
         int row;
         int y;
@@ -66,8 +71,8 @@ win_t versionSelectorWin  = {};
 win_t versionSelectorInfo = {};
 
 nstr createNstr(char* str);
-nstr* createNstrList(char** strList, size_t strCount);
-tabData_t* createTabDataList(nstr** tabNamesList, size_t tabsCount);
+nstrArray_t createNstrList(char** strList);
+tabData_t* createTabDataList(nstrArray_t* tabNamesList, size_t tabsCount);
 int customBorder(WINDOW* win, nstr* title, win_t* winInfo);
 int cleanLingeringBorder(WINDOW* win, win_t* winInfo);
 
@@ -141,6 +146,10 @@ int main(int argc, char* argv[]) {
 nstr createNstr(char* str) {
     unsigned int len = strlen(str);
     return (nstr){str, len};
+}
+
+nstrArray_t createNstrList(char** strList) {
+    for(size_t i = 0; strList[i] != NULL; i++);
 }
 
 int customBorder(WINDOW* win, nstr* title, win_t* winInfo) {
