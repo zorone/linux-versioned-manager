@@ -149,7 +149,10 @@ nstr createNstr(char* str) {
 }
 
 nstrArray_t createNstrList(char** strList) {
-    for(size_t i = 0; strList[i] != NULL; i++);
+    size_t count = 0;
+    for( ; strList[count] != NULL; count++);
+    static nstr dataTmp[count];
+    static nstrArray_t tmp;
 }
 
 int customBorder(WINDOW* win, nstr* title, win_t* winInfo) {
