@@ -43,12 +43,17 @@ typedef struct {
 
 typedef struct {
     size_t count;
-    nstr** content;
+    nstr** contents;
 } tabContent_t;
 typedef struct {
     nstr* title;
-    tabContent_t content;
+    tabContent_t* content;
 } tabData_t;
+
+typedef struct {
+    size_t count;
+    tabData_t** tabs;
+} tabsList_t;
 
 char endPosText[8] = ""; 
 char prevEndPosText[8] = ""; 
@@ -61,8 +66,8 @@ win_t versionSelectorWin  = {};
 win_t versionSelectorInfo = {};
 
 nstr createNstr(char* str);
-nstr* createNstrList(char** strList);
-tabData_t createTabDataList(nstr** tabNameList);
+nstr* createNstrList(char** strList, size_t strCount);
+tabData_t* createTabDataList(nstr** tabNamesList, size_t tabsCount);
 int customBorder(WINDOW* win, nstr* title, win_t* winInfo);
 int cleanLingeringBorder(WINDOW* win, win_t* winInfo);
 
